@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
+<body>
+<div th:replace="fragments/menu :: menu"></div>
+<h2 th:text="${patio.id == null ? 'Novo Pátio' : 'Editar Pátio'}"></h2>
+<form th:action="@{/patios/save}" th:object="${patio}" method="post">
+<input type="hidden" th:field="*{id}"/>
+<label>Nome:</label><input type="text" th:field="*{nome}" required/><br/>
+<label>Capacidade:</label><input type="number" th:field="*{capacidade}" required/><br/>
+<button type="submit">Salvar</button>
+</form>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

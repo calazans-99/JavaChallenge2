@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
+<body>
+<div th:replace="fragments/menu :: menu"></div>
+
+<h2>Lista de Motos</h2>
+<a th:href="@{/motos/new}">➕ Nova Moto</a>
+<table border="1">
+<tr><th>ID</th><th>Modelo</th><th>Placa</th><th>Posição</th><th>Pátio</th><th>Status</th><th>Ações</th></tr>
+<tr th:each="m : ${motos}">
+<td th:text="${m.id}"></td>
+<td th:text="${m.modelo}"></td>
+<td th:text="${m.placa}"></td>
+<td th:text="${m.posX} + ', ' + ${m.posY}"></td>
+<td th:text="${m.patio != null ? m.patio.nome : ''}"></td>
+<td th:text="${m.status != null ? m.status.nome : ''}"></td>
+<td>
+  <a th:href="@{/motos/edit/{id}(id=${m.id})}">Editar</a> |
+  <a th:href="@{/motos/delete/{id}(id=${m.id})}" onclick="return confirm('Excluir?')">Excluir</a>
+</td>
+</tr>
+</table>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

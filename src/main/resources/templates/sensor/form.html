@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
+<body>
+<div th:replace="fragments/menu :: menu"></div>
+<h2 th:text="${sensor.id == null ? 'Novo Sensor' : 'Editar Sensor'}"></h2>
+<form th:action="@{/sensors/save}" th:object="${sensor}" method="post">
+<input type="hidden" th:field="*{id}"/>
+<label>Tipo:</label><input type="text" th:field="*{tipo}" required/><br/>
+<label>Descrição:</label><input type="text" th:field="*{descricao}"/><br/>
+<button type="submit">Salvar</button>
+</form>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

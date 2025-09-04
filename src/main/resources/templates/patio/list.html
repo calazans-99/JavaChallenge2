@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
+<body>
+<div th:replace="fragments/menu :: menu"></div>
+<h2>Pátios</h2>
+<a th:href="@{/patios/new}">➕ Novo Pátio</a>
+<table border="1">
+<tr><th>ID</th><th>Nome</th><th>Capacidade</th><th>Ações</th></tr>
+<tr th:each="p : ${patios}">
+<td th:text="${p.id}"></td>
+<td th:text="${p.nome}"></td>
+<td th:text="${p.capacidade}"></td>
+<td>
+  <a th:href="@{/patios/edit/{id}(id=${p.id})}">Editar</a> |
+  <a th:href="@{/patios/delete/{id}(id=${p.id})}" onclick="return confirm('Excluir?')">Excluir</a>
+</td>
+</tr>
+</table>
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
