@@ -8,25 +8,25 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@Profile("dev") // Só ativa no ambiente DEV
-public class DevSecurityConfig {
+@Profile("prod") // Só ativa quando o profile for "prod"
+public class SecurityConfig {
 
     private final JpaUserDetailsService userDetailsService;
 
-    public DevSecurityConfig(JpaUserDetailsService userDetailsService) {
+    public SecurityConfig(JpaUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // DEV: senha em texto puro (não usar em PROD!)
-        return NoOpPasswordEncoder.getInstance();
+        // Produção: sempre BCrypt
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -41,14 +41,13 @@ public class DevSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/h2-console/**", "/login", "/logout").permitAll()
+                        .requestMatchers("/css/**", "/login", "/logout").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(Customizer.withDefaults())
                 .logout(Customizer.withDefaults())
                 .authenticationProvider(daoAuthenticationProvider())
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-                .headers(headers -> headers.frameOptions(frame -> frame.disable()));
+                .csrf(csrf -> csrf.disable()); // em PROD pode deixar habilitado se tiver tokens CSRF
 
         return http.build();
     }
