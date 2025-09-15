@@ -1,22 +1,39 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header"></head>
-<body>
-<div th:replace="fragments/menu :: menu"></div>
-<h2>Sensores</h2>
-<a th:href="@{/sensors/new}">➕ Novo Sensor</a>
-<table border="1">
-<tr><th>ID</th><th>Tipo</th><th>Descrição</th><th>Ações</th></tr>
-<tr th:each="s : ${sensors}">
-<td th:text="${s.id}"></td>
-<td th:text="${s.tipo}"></td>
-<td th:text="${s.descricao}"></td>
-<td>
-  <a th:href="@{/sensors/edit/{id}(id=${s.id})}">Editar</a> |
-  <a th:href="@{/sensors/delete/{id}(id=${s.id})}" onclick="return confirm('Excluir?')">Excluir</a>
-</td>
-</tr>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Sensores')}"></head>
+<body class="container mt-4">
+
+<form th:replace="~{fragmentos :: form-logout}"></form>
+<h1>Sensores</h1>
+
+<div class="mb-3">
+    <a class="btn btn-primary" th:href="@{/sensores/new}">Novo Sensor</a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>ID</th><th>Tipo</th><th>Status</th><th>Pátio</th><th>Pos. X</th><th>Pos. Y</th><th style="width:180px">Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="s : ${sensores}">
+        <td th:text="${s.id}">1</td>
+        <td th:text="${s.tipo}">PRESENCA</td>
+        <td th:text="${s.status}">ATIVO</td>
+        <td th:text="${s.patio != null ? s.patio.nome : '-'}">Pátio 1</td>
+        <td th:text="${s.posX}">0</td>
+        <td th:text="${s.posY}">0</td>
+        <td>
+            <a class="btn btn-sm btn-outline-secondary" th:href="@{/sensores/{id}/edit(id=${s.id})}">Editar</a>
+            <form th:action="@{/sensores/{id}/delete(id=${s.id})}" method="post" style="display:inline">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir este sensor?')">Excluir</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
 </table>
-<div th:replace="fragments/footer :: footer"></div>
+
 </body>
 </html>

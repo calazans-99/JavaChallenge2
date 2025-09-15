@@ -2,41 +2,64 @@ package br.com.fiap.universidade_fiap.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import java.util.Objects;
+import jakarta.validation.constraints.Size;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = "username"))
+@Table(name = "usuario")
 public class User {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id") // conforme migrações
     private Long id;
 
     @NotBlank
-    @Column(nullable = false, length = 50, unique = true)
+    @Size(max = 255)
+    @Column(name = "username", nullable = false, unique = true, length = 255)
     private String username;
 
     @NotBlank
-    @Column(nullable = false, length = 255)
-    private String password;
+    @Column(name = "senha", nullable = false) // nome de coluna do seu schema
+    private String senha;                      // (antes alguns lugares usavam "password")
 
-    @NotBlank
-    @Column(nullable = false, length = 20)
-    private String role;
+    @Size(max = 255)
+    @Column(name = "nome_perfil", length = 255)
+    private String nomePerfil;
+
+    @Size(max = 255)
+    @Column(name = "img_perfil", length = 255)
+    private String imgPerfil;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "usuario_funcao_tab",
+            joinColumns = @JoinColumn(name = "id_usuario"),
+            inverseJoinColumns = @JoinColumn(name = "id_funcao")
+    )
+    private Set<Funcao> funcoes = new HashSet<>();
+
+    public User() {}
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
 
-    @Override public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
-    }
-    @Override public int hashCode() { return Objects.hash(id); }
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
+
+    public String getNomePerfil() { return nomePerfil; }
+    public void setNomePerfil(String nomePerfil) { this.nomePerfil = nomePerfil; }
+
+    public String getImgPerfil() { return imgPerfil; }
+    public void setImgPerfil(String imgPerfil) { this.imgPerfil = imgPerfil; }
+
+    public Set<Funcao> getFuncoes() { return funcoes; }
+    public void setFuncoes(Set<Funcao> funcoes) { this.funcoes = funcoes; }
+
+    public void addFuncao(Funcao f) { this.funcoes.add(f); }
 }

@@ -1,0 +1,22 @@
+-- Funções (roles) - idempotente
+INSERT INTO funcao (nome)
+SELECT 'ADMIN' WHERE NOT EXISTS (SELECT 1 FROM funcao WHERE nome = 'ADMIN');
+
+INSERT INTO funcao (nome)
+SELECT 'COORDENADOR' WHERE NOT EXISTS (SELECT 1 FROM funcao WHERE nome = 'COORDENADOR');
+
+INSERT INTO funcao (nome)
+SELECT 'PROFESSOR' WHERE NOT EXISTS (SELECT 1 FROM funcao WHERE nome = 'PROFESSOR');
+
+INSERT INTO funcao (nome)
+SELECT 'DISCENTE' WHERE NOT EXISTS (SELECT 1 FROM funcao WHERE nome = 'DISCENTE');
+
+-- Status da Moto - idempotente
+INSERT INTO status_moto (nome)
+SELECT 'ATIVA' WHERE NOT EXISTS (SELECT 1 FROM status_moto WHERE nome = 'ATIVA');
+
+INSERT INTO status_moto (nome)
+SELECT 'EM_MANUTENCAO' WHERE NOT EXISTS (SELECT 1 FROM status_moto WHERE nome = 'EM_MANUTENCAO');
+
+INSERT INTO status_moto (nome)
+SELECT 'INATIVA' WHERE NOT EXISTS (SELECT 1 FROM status_moto WHERE nome = 'INATIVA');

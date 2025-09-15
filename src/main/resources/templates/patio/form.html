@@ -1,15 +1,39 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header"></head>
-<body>
-<div th:replace="fragments/menu :: menu"></div>
-<h2 th:text="${patio.id == null ? 'Novo Pátio' : 'Editar Pátio'}"></h2>
-<form th:action="@{/patios/save}" th:object="${patio}" method="post">
-<input type="hidden" th:field="*{id}"/>
-<label>Nome:</label><input type="text" th:field="*{nome}" required/><br/>
-<label>Capacidade:</label><input type="number" th:field="*{capacidade}" required/><br/>
-<button type="submit">Salvar</button>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Pátio')}"></head>
+<body class="container mt-4">
+
+<form th:replace="~{fragmentos :: form-logout}"></form>
+<h1 th:text="${patio.id} != null ? 'Editar Pátio' : 'Novo Pátio'">Pátio</h1>
+
+<form th:object="${patio}"
+      th:action="${patio.id} != null ? @{/patios/{id}(id=${patio.id})} : @{/patios}"
+      method="post" class="row g-3">
+
+    <div class="col-md-6">
+        <label class="form-label">Nome</label>
+        <input class="form-control" th:field="*{nome}" required>
+        <div class="text-danger" th:errors="*{nome}"></div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Localização</label>
+        <input class="form-control" th:field="*{localizacao}" required>
+        <div class="text-danger" th:errors="*{localizacao}"></div>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Capacidade</label>
+        <input type="number" class="form-control" th:field="*{capacidade}" min="0" required>
+        <div class="text-danger" th:errors="*{capacidade}"></div>
+    </div>
+
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    <div class="col-12">
+        <button class="btn btn-primary">Salvar</button>
+        <a class="btn btn-secondary" th:href="@{/patios}">Voltar</a>
+    </div>
 </form>
-<div th:replace="fragments/footer :: footer"></div>
+
 </body>
 </html>

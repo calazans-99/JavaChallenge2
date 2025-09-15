@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Status da Moto')}"></head>
+<body class="container mt-4">
+
+<form th:replace="~{fragmentos :: form-logout}"></form>
+<h1 th:text="${statusMoto.id} != null ? 'Editar Status' : 'Novo Status'">Status</h1>
+
+<form th:object="${statusMoto}"
+      th:action="${statusMoto.id} != null ? @{/status-moto/{id}(id=${statusMoto.id})} : @{/status-moto}"
+      method="post" class="row g-3">
+
+    <div class="col-md-6">
+        <label class="form-label">Nome</label>
+        <input class="form-control" th:field="*{nome}" placeholder="ATIVA / EM_MANUTENCAO / INATIVA" required>
+        <div class="text-danger" th:errors="*{nome}"></div>
+    </div>
+
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    <div class="col-12">
+        <button class="btn btn-primary">Salvar</button>
+        <a class="btn btn-secondary" th:href="@{/status-moto}">Voltar</a>
+    </div>
+</form>
+
+</body>
+</html>

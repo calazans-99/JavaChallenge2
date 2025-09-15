@@ -2,35 +2,38 @@ package br.com.fiap.universidade_fiap.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import java.util.List;
+import jakarta.validation.constraints.Size;
+
 import java.util.Objects;
 
 @Entity
 @Table(name = "status_moto")
 public class StatusMoto {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_status_moto")
     private Long id;
 
     @NotBlank
-    @Column(nullable = false, length = 50, unique = true)
-    private String nome;
+    @Size(max = 40)
+    @Column(name = "nome", nullable = false, unique = true, length = 40)
+    private String nome; // ATIVA, EM_MANUTENCAO, INATIVA...
 
-    @OneToMany(mappedBy = "status")
-    private List<Moto> motos;
+    public StatusMoto() {}
+    public StatusMoto(String nome) { this.nome = nome; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
-    public List<Moto> getMotos() { return motos; }
-    public void setMotos(List<Moto> motos) { this.motos = motos; }
 
+    // ajuda o <select th:field="*{status}">
     @Override public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof StatusMoto)) return false;
-        StatusMoto that = (StatusMoto) o;
-        return Objects.equals(id, that.id);
+        StatusMoto other = (StatusMoto) o;
+        return id != null && id.equals(other.id);
     }
-    @Override public int hashCode() { return Objects.hash(id); }
+    @Override public int hashCode() { return Objects.hashCode(id); }
 }

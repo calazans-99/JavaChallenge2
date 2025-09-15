@@ -1,27 +1,41 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header"></head>
-<body>
-<div th:replace="fragments/menu :: menu"></div>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Motos')}"></head>
+<body class="container mt-4">
 
-<h2>Lista de Motos</h2>
-<a th:href="@{/motos/new}">➕ Nova Moto</a>
-<table border="1">
-<tr><th>ID</th><th>Modelo</th><th>Placa</th><th>Posição</th><th>Pátio</th><th>Status</th><th>Ações</th></tr>
-<tr th:each="m : ${motos}">
-<td th:text="${m.id}"></td>
-<td th:text="${m.modelo}"></td>
-<td th:text="${m.placa}"></td>
-<td th:text="${m.posX} + ', ' + ${m.posY}"></td>
-<td th:text="${m.patio != null ? m.patio.nome : ''}"></td>
-<td th:text="${m.status != null ? m.status.nome : ''}"></td>
-<td>
-  <a th:href="@{/motos/edit/{id}(id=${m.id})}">Editar</a> |
-  <a th:href="@{/motos/delete/{id}(id=${m.id})}" onclick="return confirm('Excluir?')">Excluir</a>
-</td>
-</tr>
+<form th:replace="~{fragmentos :: form-logout}"></form>
+<h1>Motos</h1>
+
+<div class="mb-3">
+    <a class="btn btn-primary" th:href="@{/motos/new}">Nova Moto</a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>ID</th><th>Modelo</th><th>Placa</th><th>Pátio</th><th>Status</th>
+        <th>Pos. X</th><th>Pos. Y</th><th style="width:180px">Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="m : ${motos}">
+        <td th:text="${m.id}">1</td>
+        <td th:text="${m.modelo}">PCX</td>
+        <td th:text="${m.placa}">ABC-1234</td>
+        <td th:text="${m.patio != null ? m.patio.nome : '-'}">Pátio 1</td>
+        <td th:text="${m.status != null ? m.status.nome : '-'}">ATIVA</td>
+        <td th:text="${m.posX}">0</td>
+        <td th:text="${m.posY}">0</td>
+        <td>
+            <a class="btn btn-sm btn-outline-secondary" th:href="@{/motos/{id}/edit(id=${m.id})}">Editar</a>
+            <form th:action="@{/motos/{id}/delete(id=${m.id})}" method="post" style="display:inline">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir esta moto?')">Excluir</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
 </table>
 
-<div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>

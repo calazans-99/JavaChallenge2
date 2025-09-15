@@ -1,27 +1,60 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header"></head>
-<body>
-<div th:replace="fragments/menu :: menu"></div>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Moto')}"></head>
+<body class="container mt-4">
 
-<h2 th:text="${moto.id == null ? 'Nova Moto' : 'Editar Moto'}"></h2>
-<form th:action="@{/motos/save}" th:object="${moto}" method="post">
-<input type="hidden" th:field="*{id}"/>
-<label>Modelo:</label><input type="text" th:field="*{modelo}" required/><br/>
-<label>Placa:</label><input type="text" th:field="*{placa}" required/><br/>
-<label>Posição X:</label><input type="number" th:field="*{posX}"/><br/>
-<label>Posição Y:</label><input type="number" th:field="*{posY}"/><br/>
-<label>Pátio:</label>
-<select th:field="*{patio.id}">
-  <option th:each="p : ${patios}" th:value="${p.id}" th:text="${p.nome}"></option>
-</select><br/>
-<label>Status:</label>
-<select th:field="*{status.id}">
-  <option th:each="s : ${statuses}" th:value="${s.id}" th:text="${s.nome}"></option>
-</select><br/>
-<button type="submit">Salvar</button>
+<form th:replace="~{fragmentos :: form-logout}"></form>
+<h1 th:text="${moto.id} != null ? 'Editar Moto' : 'Nova Moto'">Moto</h1>
+
+<form th:object="${moto}"
+      th:action="${moto.id} != null ? @{/motos/{id}(id=${moto.id})} : @{/motos}"
+      method="post" class="row g-3">
+
+    <div class="col-md-6">
+        <label class="form-label">Modelo</label>
+        <input class="form-control" th:field="*{modelo}" required>
+        <div class="text-danger" th:errors="*{modelo}"></div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Placa</label>
+        <input class="form-control" th:field="*{placa}" maxlength="8" required>
+        <div class="text-danger" th:errors="*{placa}"></div>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Pos. X</label>
+        <input type="number" class="form-control" th:field="*{posX}">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Pos. Y</label>
+        <input type="number" class="form-control" th:field="*{posY}">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Pátio</label>
+        <!-- usando o id evita precisar de converter -->
+        <select class="form-select" th:field="*{patio.id}" required>
+            <option th:each="p : ${patios}" th:value="${p.id}" th:text="${p.nome}"></option>
+        </select>
+        <div class="text-danger" th:errors="*{patio}"></div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-select" th:field="*{status.id}" required>
+            <option th:each="s : ${statusList}" th:value="${s.id}" th:text="${s.nome}"></option>
+        </select>
+        <div class="text-danger" th:errors="*{status}"></div>
+    </div>
+
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    <div class="col-12">
+        <button class="btn btn-primary">Salvar</button>
+        <a class="btn btn-secondary" th:href="@{/motos}">Voltar</a>
+    </div>
 </form>
 
-<div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>

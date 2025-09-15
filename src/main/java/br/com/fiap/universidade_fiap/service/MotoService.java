@@ -3,31 +3,53 @@ package br.com.fiap.universidade_fiap.service;
 import br.com.fiap.universidade_fiap.model.Moto;
 import br.com.fiap.universidade_fiap.model.Patio;
 import br.com.fiap.universidade_fiap.repository.MotoRepository;
-import br.com.fiap.universidade_fiap.repository.PatioRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-public class MotoService {
-    private final MotoRepository motoRepo;
-    private final PatioRepository patioRepo;
+import java.util.List;
 
-    public MotoService(MotoRepository motoRepo, PatioRepository patioRepo) {
-        this.motoRepo = motoRepo;
-        this.patioRepo = patioRepo;
+@Service
+@Transactional
+public class MotoService {
+
+    private final MotoRepository repo;
+
+    public MotoService(MotoRepository repo) {
+        this.repo = repo;
     }
 
-    @Transactional
-    public Moto salvarComValidacao(Moto m) {
-        if (m.getPatio() != null && m.getPatio().getId() != null) {
-            Patio patio = patioRepo.findById(m.getPatio().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Pátio inválido"));
-            long qtd = motoRepo.countByPatio(patio);
-            if (qtd >= patio.getCapacidade()) {
-                throw new IllegalStateException("Pátio lotado! Não é possível adicionar a moto.");
-            }
-            m.setPatio(patio);
-        }
-        return motoRepo.save(m);
+    @Transactional(readOnly = true)
+    public List<Moto> findAll() {
+        return repo.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Moto findById(Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Moto não encontrada"));
+    }
+
+    public Moto save(Moto moto) {
+        return repo.save(moto);
+    }
+
+    public void delete(Long id) {
+        repo.deleteById(id);
+    }
+
+    // utilidades
+    @Transactional(readOnly = true)
+    public boolean existsByPlaca(String placa) {
+        return repo.findByPlaca(placa).isPresent();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Moto> searchByModelo(String termo) {
+        return repo.findByModeloContainingIgnoreCase(termo);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Moto> findByPatio(Patio patio) {
+        return repo.findByPatio(patio);
     }
 }

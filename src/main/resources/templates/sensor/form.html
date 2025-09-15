@@ -1,15 +1,51 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header"></head>
-<body>
-<div th:replace="fragments/menu :: menu"></div>
-<h2 th:text="${sensor.id == null ? 'Novo Sensor' : 'Editar Sensor'}"></h2>
-<form th:action="@{/sensors/save}" th:object="${sensor}" method="post">
-<input type="hidden" th:field="*{id}"/>
-<label>Tipo:</label><input type="text" th:field="*{tipo}" required/><br/>
-<label>Descrição:</label><input type="text" th:field="*{descricao}"/><br/>
-<button type="submit">Salvar</button>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Sensor')}"></head>
+<body class="container mt-4">
+
+<form th:replace="~{fragmentos :: form-logout}"></form>
+<h1 th:text="${sensor.id} != null ? 'Editar Sensor' : 'Novo Sensor'">Sensor</h1>
+
+<form th:object="${sensor}"
+      th:action="${sensor.id} != null ? @{/sensores/{id}(id=${sensor.id})} : @{/sensores}"
+      method="post" class="row g-3">
+
+    <div class="col-md-6">
+        <label class="form-label">Tipo</label>
+        <input class="form-control" th:field="*{tipo}" required>
+        <div class="text-danger" th:errors="*{tipo}"></div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <input class="form-control" th:field="*{status}" required>
+        <div class="text-danger" th:errors="*{status}"></div>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Pos. X</label>
+        <input type="number" class="form-control" th:field="*{posX}">
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Pos. Y</label>
+        <input type="number" class="form-control" th:field="*{posY}">
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label">Pátio</label>
+        <!-- se não tiver conversor, use th:field="*{patio.id}" -->
+        <select class="form-select" th:field="*{patio.id}" required>
+            <option th:each="p : ${patios}" th:value="${p.id}" th:text="${p.nome}"></option>
+        </select>
+    </div>
+
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    <div class="col-12">
+        <button class="btn btn-primary">Salvar</button>
+        <a class="btn btn-secondary" th:href="@{/sensores}">Voltar</a>
+    </div>
 </form>
-<div th:replace="fragments/footer :: footer"></div>
+
 </body>
 </html>

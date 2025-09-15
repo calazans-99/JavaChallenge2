@@ -1,40 +1,44 @@
 package br.com.fiap.universidade_fiap.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import java.util.Objects;
+import jakarta.validation.constraints.*;
 
 @Entity
-@Table(name = "moto", uniqueConstraints = @UniqueConstraint(columnNames = "placa"))
+@Table(name = "moto")
 public class Moto {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_moto")
     private Long id;
 
     @NotBlank
-    @Column(nullable = false, length = 50)
+    @Size(max = 50)
+    @Column(name = "modelo", nullable = false, length = 50)
     private String modelo;
 
-    @NotBlank @Size(max = 8)
-    @Column(nullable = false, length = 8, unique = true)
+    @NotBlank
+    @Size(max = 8)
+    @Column(name = "placa", nullable = false, unique = true, length = 8)
     private String placa;
 
+    @Min(0)
     @Column(name = "pos_x")
     private Integer posX;
 
+    @Min(0)
     @Column(name = "pos_y")
     private Integer posY;
 
-    private Integer ano;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patio_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_patio", nullable = false)
     private Patio patio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "status_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_status_moto", nullable = false)
     private StatusMoto status;
+
+    public Moto() {}
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -46,18 +50,8 @@ public class Moto {
     public void setPosX(Integer posX) { this.posX = posX; }
     public Integer getPosY() { return posY; }
     public void setPosY(Integer posY) { this.posY = posY; }
-    public Integer getAno() { return ano; }
-    public void setAno(Integer ano) { this.ano = ano; }
     public Patio getPatio() { return patio; }
     public void setPatio(Patio patio) { this.patio = patio; }
     public StatusMoto getStatus() { return status; }
     public void setStatus(StatusMoto status) { this.status = status; }
-
-    @Override public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Moto)) return false;
-        Moto moto = (Moto) o;
-        return Objects.equals(id, moto.id);
-    }
-    @Override public int hashCode() { return Objects.hash(id); }
 }

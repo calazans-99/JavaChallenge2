@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Status da Moto')}"></head>
+<body class="container mt-4">
+
+<form th:replace="~{fragmentos :: form-logout}"></form>
+<h1>Status da Moto</h1>
+
+<div class="mb-3">
+    <a class="btn btn-primary" th:href="@{/status-moto/new}">Novo Status</a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>ID</th><th>Nome</th><th style="width:180px">Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="s : ${statusList}">
+        <td th:text="${s.id}">1</td>
+        <td th:text="${s.nome}">ATIVA</td>
+        <td>
+            <a class="btn btn-sm btn-outline-secondary" th:href="@{/status-moto/{id}/edit(id=${s.id})}">Editar</a>
+            <form th:action="@{/status-moto/{id}/delete(id=${s.id})}" method="post" style="display:inline">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir este status?')">Excluir</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html SYSTEM="http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: cabecalho('Dashboard')}"></head>
+<body>
+
+<form th:replace="~{fragmentos :: form-logout}"></form>
+
+<div class="container">
+    <div th:replace="~{fragmentos :: saudacoes(${usuario})}"></div>
+
+    <div class="row">
+        <h1>Dashboard</h1>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Motos</h5>
+                    <p class="card-text">Gerenciar motos cadastradas.</p>
+                    <a class="btn btn-primary" th:href="@{/motos}">Abrir</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Sensores</h5>
+                    <p class="card-text">Gerenciar sensores por pátio.</p>
+                    <a class="btn btn-primary" th:href="@{/sensores}">Abrir</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Pátios</h5>
+                    <p class="card-text">Cadastrar e visualizar pátios.</p>
+                    <a class="btn btn-primary" th:href="@{/patios}">Abrir</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Status da Moto</h5>
+                    <p class="card-text">Catálogo de status (ATIVA, MANUTENÇÃO, ...).</p>
+                    <a class="btn btn-primary" th:href="@{/status-moto}">Abrir</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Usuários</h5>
+                    <p class="card-text">Administrar acessos e funções.</p>
+                    <a class="btn btn-primary" th:href="@{/usuarios}">Abrir</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+</body>
+</html>
