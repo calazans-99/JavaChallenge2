@@ -2,9 +2,10 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragmentos :: cabecalho('Status da Moto')}"></head>
 <body class="container mt-4">
-
 <form th:replace="~{fragmentos :: form-logout}"></form>
-<h1>Status da Moto</h1>
+
+<div th:replace="~{fragmentos :: page-header('Status da Moto', @{/index})}"></div>
+<div th:replace="~{fragmentos :: alerts}"></div>
 
 <div class="mb-3">
     <a class="btn btn-primary" th:href="@{/status-moto/new}">Novo Status</a>
@@ -31,5 +32,6 @@
     </tbody>
 </table>
 
+<div th:replace="~{fragmentos :: rodape-scripts}"></div>
 </body>
 </html>

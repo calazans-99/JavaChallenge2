@@ -2,9 +2,10 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragmentos :: cabecalho('Sensores')}"></head>
 <body class="container mt-4">
-
 <form th:replace="~{fragmentos :: form-logout}"></form>
-<h1>Sensores</h1>
+
+<div th:replace="~{fragmentos :: page-header('Sensores', @{/index})}"></div>
+<div th:replace="~{fragmentos :: alerts}"></div>
 
 <div class="mb-3">
     <a class="btn btn-primary" th:href="@{/sensores/new}">Novo Sensor</a>
@@ -35,5 +36,6 @@
     </tbody>
 </table>
 
+<div th:replace="~{fragmentos :: rodape-scripts}"></div>
 </body>
 </html>

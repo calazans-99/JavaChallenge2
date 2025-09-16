@@ -1,19 +1,21 @@
 package br.com.fiap.universidade_fiap.repository;
 
 import br.com.fiap.universidade_fiap.model.Moto;
-import br.com.fiap.universidade_fiap.model.Patio;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface MotoRepository extends JpaRepository<Moto, Long> {
 
-    // validação de duplicidade de placa
-    Optional<Moto> findByPlaca(String placa);
+    // Listagem já com pátio e status carregados (evita Lazy na view)
+    @EntityGraph(attributePaths = {"patio", "status"})
+    @Query("select m from Moto m")
+    List<Moto> findAllWithPatioAndStatus();
 
-    // filtros comuns
-    List<Moto> findByModeloContainingIgnoreCase(String modelo);
-    List<Moto> findByPatio(Patio patio);
-    List<Moto> findByStatusNome(String nome); // navegação pela relação (status.nome)
+    // Detalhe/edição já com pátio e status carregados
+    @EntityGraph(attributePaths = {"patio", "status"})
+    Optional<Moto> findById(Long id);
 }

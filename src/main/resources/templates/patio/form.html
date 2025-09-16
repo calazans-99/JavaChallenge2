@@ -2,9 +2,10 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragmentos :: cabecalho('Pátio')}"></head>
 <body class="container mt-4">
-
 <form th:replace="~{fragmentos :: form-logout}"></form>
-<h1 th:text="${patio.id} != null ? 'Editar Pátio' : 'Novo Pátio'">Pátio</h1>
+
+<div th:replace="~{fragmentos :: page-header(${patio.id} != null ? 'Editar Pátio' : 'Novo Pátio', @{/patios})}"></div>
+<div th:replace="~{fragmentos :: alerts}"></div>
 
 <form th:object="${patio}"
       th:action="${patio.id} != null ? @{/patios/{id}(id=${patio.id})} : @{/patios}"
@@ -35,5 +36,6 @@
     </div>
 </form>
 
+<div th:replace="~{fragmentos :: rodape-scripts}"></div>
 </body>
 </html>

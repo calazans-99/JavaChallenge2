@@ -2,9 +2,10 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragmentos :: cabecalho('Usuário')}"></head>
 <body class="container mt-4">
-
 <form th:replace="~{fragmentos :: form-logout}"></form>
-<h1 th:text="${usuario.id} != null ? 'Editar Usuário' : 'Novo Usuário'">Usuário</h1>
+
+<div th:replace="~{fragmentos :: page-header(${usuario.id} != null ? 'Editar Usuário' : 'Novo Usuário', @{/usuarios})}"></div>
+<div th:replace="~{fragmentos :: alerts}"></div>
 
 <form th:object="${usuario}"
       th:action="${usuario.id} != null ? @{/usuarios/{id}(id=${usuario.id})} : @{/usuarios}"
@@ -34,7 +35,6 @@
 
     <div class="col-12">
         <label class="form-label">Funções</label>
-        <!-- Se não houver conversor para Set<Funcao>, mude para *{funcoesIds} e trate no controller -->
         <select multiple class="form-select" th:field="*{funcoes}">
             <option th:each="f : ${funcoes}" th:value="${f.id}" th:text="${f.nome}"></option>
         </select>
@@ -47,5 +47,6 @@
     </div>
 </form>
 
+<div th:replace="~{fragmentos :: rodape-scripts}"></div>
 </body>
 </html>

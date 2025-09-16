@@ -2,9 +2,10 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragmentos :: cabecalho('Status da Moto')}"></head>
 <body class="container mt-4">
-
 <form th:replace="~{fragmentos :: form-logout}"></form>
-<h1 th:text="${statusMoto.id} != null ? 'Editar Status' : 'Novo Status'">Status</h1>
+
+<div th:replace="~{fragmentos :: page-header(${statusMoto.id} != null ? 'Editar Status' : 'Novo Status', @{/status-moto})}"></div>
+<div th:replace="~{fragmentos :: alerts}"></div>
 
 <form th:object="${statusMoto}"
       th:action="${statusMoto.id} != null ? @{/status-moto/{id}(id=${statusMoto.id})} : @{/status-moto}"
@@ -23,5 +24,6 @@
     </div>
 </form>
 
+<div th:replace="~{fragmentos :: rodape-scripts}"></div>
 </body>
 </html>

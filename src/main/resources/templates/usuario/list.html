@@ -2,9 +2,10 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragmentos :: cabecalho('Usuários')}"></head>
 <body class="container mt-4">
-
 <form th:replace="~{fragmentos :: form-logout}"></form>
-<h1>Usuários</h1>
+
+<div th:replace="~{fragmentos :: page-header('Usuários', @{/index})}"></div>
+<div th:replace="~{fragmentos :: alerts}"></div>
 
 <div class="mb-3">
     <a class="btn btn-primary" th:href="@{/usuarios/new}">Novo Usuário</a>
@@ -22,9 +23,9 @@
         <td th:text="${u.username}">admin</td>
         <td th:text="${u.nomePerfil}">Administrador</td>
         <td>
-        <span th:each="f,iter : ${u.funcoes}">
-          <span th:text="${f.nome}">ADMIN</span><span th:if="${!iter.last}">, </span>
-        </span>
+      <span th:each="f,iter : ${u.funcoes}">
+        <span th:text="${f.nome}">ADMIN</span><span th:if="${!iter.last}">, </span>
+      </span>
         </td>
         <td>
             <a class="btn btn-sm btn-outline-secondary" th:href="@{/usuarios/{id}/edit(id=${u.id})}">Editar</a>
@@ -37,5 +38,6 @@
     </tbody>
 </table>
 
+<div th:replace="~{fragmentos :: rodape-scripts}"></div>
 </body>
 </html>

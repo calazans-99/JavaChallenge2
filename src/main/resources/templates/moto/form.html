@@ -2,9 +2,10 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragmentos :: cabecalho('Moto')}"></head>
 <body class="container mt-4">
-
 <form th:replace="~{fragmentos :: form-logout}"></form>
-<h1 th:text="${moto.id} != null ? 'Editar Moto' : 'Nova Moto'">Moto</h1>
+
+<div th:replace="~{fragmentos :: page-header(${moto.id} != null ? 'Editar Moto' : 'Nova Moto', @{/motos})}"></div>
+<div th:replace="~{fragmentos :: alerts}"></div>
 
 <form th:object="${moto}"
       th:action="${moto.id} != null ? @{/motos/{id}(id=${moto.id})} : @{/motos}"
@@ -34,7 +35,6 @@
 
     <div class="col-md-6">
         <label class="form-label">Pátio</label>
-        <!-- usando o id evita precisar de converter -->
         <select class="form-select" th:field="*{patio.id}" required>
             <option th:each="p : ${patios}" th:value="${p.id}" th:text="${p.nome}"></option>
         </select>
@@ -56,5 +56,6 @@
     </div>
 </form>
 
+<div th:replace="~{fragmentos :: rodape-scripts}"></div>
 </body>
 </html>

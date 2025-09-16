@@ -2,9 +2,10 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragmentos :: cabecalho('Sensor')}"></head>
 <body class="container mt-4">
-
 <form th:replace="~{fragmentos :: form-logout}"></form>
-<h1 th:text="${sensor.id} != null ? 'Editar Sensor' : 'Novo Sensor'">Sensor</h1>
+
+<div th:replace="~{fragmentos :: page-header(${sensor.id} != null ? 'Editar Sensor' : 'Novo Sensor', @{/sensores})}"></div>
+<div th:replace="~{fragmentos :: alerts}"></div>
 
 <form th:object="${sensor}"
       th:action="${sensor.id} != null ? @{/sensores/{id}(id=${sensor.id})} : @{/sensores}"
@@ -34,7 +35,6 @@
 
     <div class="col-md-12">
         <label class="form-label">Pátio</label>
-        <!-- se não tiver conversor, use th:field="*{patio.id}" -->
         <select class="form-select" th:field="*{patio.id}" required>
             <option th:each="p : ${patios}" th:value="${p.id}" th:text="${p.nome}"></option>
         </select>
@@ -47,5 +47,6 @@
     </div>
 </form>
 
+<div th:replace="~{fragmentos :: rodape-scripts}"></div>
 </body>
 </html>
