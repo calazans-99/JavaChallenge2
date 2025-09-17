@@ -78,4 +78,19 @@ public class SensorController {
         ra.addFlashAttribute("msg", "Sensor removido com sucesso!");
         return "redirect:/sensores";
     }
+
+    // ===== Novos endpoints do fluxo =====
+    @PostMapping("/{id}/ocupar")
+    public String ocupar(@PathVariable Long id, RedirectAttributes ra) {
+        service.ocupar(id);
+        ra.addFlashAttribute("msg", "Sensor marcado como OCUPADO.");
+        return "redirect:/sensores";
+    }
+
+    @PostMapping("/{id}/liberar")
+    public String liberar(@PathVariable Long id, RedirectAttributes ra) {
+        service.liberar(id);
+        ra.addFlashAttribute("msg", "Sensor marcado como LIVRE.");
+        return "redirect:/sensores";
+    }
 }

@@ -85,4 +85,19 @@ public class MotoController {
         ra.addFlashAttribute("msg", "Moto removida com sucesso!");
         return "redirect:/motos";
     }
+
+    // ===== NOVOS ENDPOINTS: ações na lista =====
+    @PostMapping("/{id}/ativar")
+    public String ativar(@PathVariable Long id, RedirectAttributes ra) {
+        service.alterarStatus(id, "ATIVA");
+        ra.addFlashAttribute("msg", "Moto ativada!");
+        return "redirect:/motos";
+    }
+
+    @PostMapping("/{id}/manutencao")
+    public String manutencao(@PathVariable Long id, RedirectAttributes ra) {
+        service.alterarStatus(id, "EM_MANUTENCAO");
+        ra.addFlashAttribute("msg", "Moto enviada para manutenção!");
+        return "redirect:/motos";
+    }
 }
