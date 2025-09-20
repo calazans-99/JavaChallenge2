@@ -89,7 +89,7 @@ mvn spring-boot:run
 ```
 
 **2) Acessos**
-- App: http://localhost:8080  
+- App: http://localhost:8081  
 - H2 (dev): http://localhost:8080/h2-console  
   - JDBC URL: `jdbc:h2:mem:testdb`
   - User: `sa` / Password: *(vazio)*
