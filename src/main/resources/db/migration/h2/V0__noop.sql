@@ -1,0 +1,2 @@
+-- V0__noop.sql (H2)
+-- No-op para H2, apenas mantém a sequência de versões
