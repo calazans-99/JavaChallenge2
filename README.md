@@ -90,7 +90,7 @@ mvn spring-boot:run
 
 **2) Acessos**
 - App: http://localhost:8081  
-- H2 (dev): http://localhost:8080/h2-console  
+- H2 (dev): http://localhost:8081/h2-console  
   - JDBC URL: `jdbc:h2:mem:testdb`
   - User: `sa` / Password: *(vazio)*
 
@@ -212,10 +212,10 @@ src/
 
 ```bash
 # Login (200)
-curl -i http://localhost:8080/login
+curl -i http://localhost:8081/login
 
 # Página protegida (302 para login se não autenticado)
-curl -i http://localhost:8080/motos
+curl -i http://localhost:8081/motos
 ```
 
 ---
