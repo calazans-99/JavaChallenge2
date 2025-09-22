@@ -60,6 +60,6 @@ public class SegurancaConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(); // força padrão; verifica qualquer hash $2a$... inclusive custo 12
     }
 }

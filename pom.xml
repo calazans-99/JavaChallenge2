@@ -8,7 +8,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.4</version>
-        <relativePath />
+        <relativePath/>
     </parent>
 
     <groupId>br.com.fiap</groupId>
@@ -18,12 +18,21 @@
     <description>Projeto Challenge 3</description>
 
     <properties>
-        <!-- Alinhe com a versão do Java do seu ambiente (17 ou 21) -->
+        <!-- Use 17 mesmo, funciona com JDK 21 também -->
         <java.version>17</java.version>
+
+        <!-- Perfil Spring ativo por padrão quando não usar -P -->
+        <active.spring.profile>h2</active.spring.profile>
     </properties>
 
     <dependencies>
-        <!-- Spring Boot starters -->
+        <!-- (Opcional porém recomendado) garante o SpringApplication no classpath -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Starters já existentes -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -45,21 +54,21 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- Banco em memória (dev/testes locais) -->
+        <!-- H2 para dev -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Banco real (produção) -->
+        <!-- PostgreSQL -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Flyway core + suporte Postgres -->
+        <!-- Flyway -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
@@ -70,20 +79,20 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Thymeleaf Security Dialect (sec:authorize) -->
+        <!-- Thymeleaf Security Dialect -->
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
 
-        <!-- Lombok (opcional, ajuda a reduzir boilerplate) -->
+        <!-- Lombok (opcional) -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
 
-        <!-- Devtools (opcional, recarrega app no dev) -->
+        <!-- Devtools (opcional) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -91,7 +100,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- Dependências de Teste -->
+        <!-- Testes -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -106,10 +115,16 @@
 
     <build>
         <plugins>
+            <!-- Spring Boot plugin: agora lê ${active.spring.profile} -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Passa o perfil do Spring que queremos ativar ao rodar -->
+                    <profiles>${active.spring.profile}</profiles>
+                </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -117,4 +132,23 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- ===== PERFIS MAVEN ===== -->
+    <profiles>
+        <!-- Ativa Spring profile = postgres -->
+        <profile>
+            <id>postgres</id>
+            <properties>
+                <active.spring.profile>postgres</active.spring.profile>
+            </properties>
+        </profile>
+
+        <!-- Ativa Spring profile = h2 -->
+        <profile>
+            <id>h2</id>
+            <properties>
+                <active.spring.profile>h2</active.spring.profile>
+            </properties>
+        </profile>
+    </profiles>
 </project>
