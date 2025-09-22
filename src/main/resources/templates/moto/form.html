@@ -7,54 +7,56 @@
 <div th:replace="~{fragmentos :: page-header(${moto.id} != null ? 'Editar Moto' : 'Nova Moto', @{/motos})}"></div>
 <div th:replace="~{fragmentos :: alerts}"></div>
 
-<form th:object="${moto}"
-      th:action="${moto.id} != null ? @{/motos/{id}(id=${moto.id})} : @{/motos}"
-      method="post" class="row g-3">
+<div class="card shadow p-4">
+    <form th:object="${moto}"
+          th:action="${moto.id} != null ? @{/motos/{id}(id=${moto.id})} : @{/motos}"
+          method="post" class="row g-3">
 
-    <div class="col-md-6">
-        <label class="form-label">Modelo</label>
-        <input class="form-control" th:field="*{modelo}" required>
-        <div class="text-danger" th:errors="*{modelo}"></div>
-    </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Modelo</label>
+            <input class="form-control" th:field="*{modelo}" required>
+            <div class="text-danger small" th:errors="*{modelo}"></div>
+        </div>
 
-    <div class="col-md-6">
-        <label class="form-label">Placa</label>
-        <input class="form-control" th:field="*{placa}" maxlength="8" required>
-        <div class="text-danger" th:errors="*{placa}"></div>
-    </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Placa</label>
+            <input class="form-control" th:field="*{placa}" maxlength="8" required>
+            <div class="text-danger small" th:errors="*{placa}"></div>
+        </div>
 
-    <div class="col-md-3">
-        <label class="form-label">Pos. X</label>
-        <input type="number" class="form-control" th:field="*{posX}">
-    </div>
+        <div class="col-md-3">
+            <label class="form-label fw-bold">Pos. X</label>
+            <input type="number" class="form-control" th:field="*{posX}">
+        </div>
 
-    <div class="col-md-3">
-        <label class="form-label">Pos. Y</label>
-        <input type="number" class="form-control" th:field="*{posY}">
-    </div>
+        <div class="col-md-3">
+            <label class="form-label fw-bold">Pos. Y</label>
+            <input type="number" class="form-control" th:field="*{posY}">
+        </div>
 
-    <div class="col-md-6">
-        <label class="form-label">Pátio</label>
-        <select class="form-select" th:field="*{patio.id}" required>
-            <option th:each="p : ${patios}" th:value="${p.id}" th:text="${p.nome}"></option>
-        </select>
-        <div class="text-danger" th:errors="*{patio}"></div>
-    </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Pátio</label>
+            <select class="form-select" th:field="*{patio.id}" required>
+                <option th:each="p : ${patios}" th:value="${p.id}" th:text="${p.nome}"></option>
+            </select>
+            <div class="text-danger small" th:errors="*{patio}"></div>
+        </div>
 
-    <div class="col-md-6">
-        <label class="form-label">Status</label>
-        <select class="form-select" th:field="*{status.id}" required>
-            <option th:each="s : ${statusList}" th:value="${s.id}" th:text="${s.nome}"></option>
-        </select>
-        <div class="text-danger" th:errors="*{status}"></div>
-    </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Status</label>
+            <select class="form-select" th:field="*{status.id}" required>
+                <option th:each="s : ${statusList}" th:value="${s.id}" th:text="${s.nome}"></option>
+            </select>
+            <div class="text-danger small" th:errors="*{status}"></div>
+        </div>
 
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-    <div class="col-12">
-        <button class="btn btn-primary">Salvar</button>
-        <a class="btn btn-secondary" th:href="@{/motos}">Voltar</a>
-    </div>
-</form>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <div class="col-12 d-flex justify-content-end gap-2">
+            <button class="btn btn-primary">Salvar</button>
+            <a class="btn btn-secondary" th:href="@{/motos}">Voltar</a>
+        </div>
+    </form>
+</div>
 
 <div th:replace="~{fragmentos :: rodape-scripts}"></div>
 </body>

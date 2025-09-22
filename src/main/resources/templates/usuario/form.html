@@ -7,45 +7,47 @@
 <div th:replace="~{fragmentos :: page-header(${usuario.id} != null ? 'Editar Usuário' : 'Novo Usuário', @{/usuarios})}"></div>
 <div th:replace="~{fragmentos :: alerts}"></div>
 
-<form th:object="${usuario}"
-      th:action="${usuario.id} != null ? @{/usuarios/{id}(id=${usuario.id})} : @{/usuarios}"
-      method="post" class="row g-3">
+<div class="card shadow p-4">
+    <form th:object="${usuario}"
+          th:action="${usuario.id} != null ? @{/usuarios/{id}(id=${usuario.id})} : @{/usuarios}"
+          method="post" class="row g-3">
 
-    <div class="col-md-6">
-        <label class="form-label">Username</label>
-        <input class="form-control" th:field="*{username}" required>
-        <div class="text-danger" th:errors="*{username}"></div>
-    </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Username</label>
+            <input class="form-control" th:field="*{username}" required>
+            <div class="text-danger small" th:errors="*{username}"></div>
+        </div>
 
-    <div class="col-md-6" th:if="${usuario.id == null}">
-        <label class="form-label">Senha</label>
-        <input type="password" class="form-control" th:field="*{senha}" required>
-        <div class="text-danger" th:errors="*{senha}"></div>
-    </div>
+        <div class="col-md-6" th:if="${usuario.id == null}">
+            <label class="form-label fw-bold">Senha</label>
+            <input type="password" class="form-control" th:field="*{senha}" required>
+            <div class="text-danger small" th:errors="*{senha}"></div>
+        </div>
 
-    <div class="col-md-6">
-        <label class="form-label">Nome do Perfil</label>
-        <input class="form-control" th:field="*{nomePerfil}">
-    </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Nome do Perfil</label>
+            <input class="form-control" th:field="*{nomePerfil}">
+        </div>
 
-    <div class="col-md-6">
-        <label class="form-label">Imagem do Perfil (URL)</label>
-        <input class="form-control" th:field="*{imgPerfil}">
-    </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Imagem do Perfil (URL)</label>
+            <input class="form-control" th:field="*{imgPerfil}">
+        </div>
 
-    <div class="col-12">
-        <label class="form-label">Funções</label>
-        <select multiple class="form-select" th:field="*{funcoes}">
-            <option th:each="f : ${funcoes}" th:value="${f.id}" th:text="${f.nome}"></option>
-        </select>
-    </div>
+        <div class="col-12">
+            <label class="form-label fw-bold">Funções</label>
+            <select multiple class="form-select" th:field="*{funcoes}">
+                <option th:each="f : ${funcoes}" th:value="${f.id}" th:text="${f.nome}"></option>
+            </select>
+        </div>
 
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-    <div class="col-12">
-        <button class="btn btn-primary">Salvar</button>
-        <a class="btn btn-secondary" th:href="@{/usuarios}">Voltar</a>
-    </div>
-</form>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <div class="col-12 d-flex justify-content-end gap-2">
+            <button class="btn btn-primary">Salvar</button>
+            <a class="btn btn-secondary" th:href="@{/usuarios}">Voltar</a>
+        </div>
+    </form>
+</div>
 
 <div th:replace="~{fragmentos :: rodape-scripts}"></div>
 </body>

@@ -7,45 +7,48 @@
 <div th:replace="~{fragmentos :: page-header(${sensor.id} != null ? 'Editar Sensor' : 'Novo Sensor', @{/sensores})}"></div>
 <div th:replace="~{fragmentos :: alerts}"></div>
 
-<form th:object="${sensor}"
-      th:action="${sensor.id} != null ? @{/sensores/{id}(id=${sensor.id})} : @{/sensores}"
-      method="post" class="row g-3">
+<div class="card shadow p-4">
+    <form th:object="${sensor}"
+          th:action="${sensor.id} != null ? @{/sensores/{id}(id=${sensor.id})} : @{/sensores}"
+          method="post" class="row g-3">
 
-    <div class="col-md-6">
-        <label class="form-label">Tipo</label>
-        <input class="form-control" th:field="*{tipo}" required>
-        <div class="text-danger" th:errors="*{tipo}"></div>
-    </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Tipo</label>
+            <input class="form-control" th:field="*{tipo}" required>
+            <div class="text-danger small" th:errors="*{tipo}"></div>
+        </div>
 
-    <div class="col-md-6">
-        <label class="form-label">Status</label>
-        <input class="form-control" th:field="*{status}" required>
-        <div class="text-danger" th:errors="*{status}"></div>
-    </div>
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Status</label>
+            <input class="form-control" th:field="*{status}" required>
+            <div class="text-danger small" th:errors="*{status}"></div>
+        </div>
 
-    <div class="col-md-4">
-        <label class="form-label">Pos. X</label>
-        <input type="number" class="form-control" th:field="*{posX}">
-    </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Pos. X</label>
+            <input type="number" class="form-control" th:field="*{posX}">
+        </div>
 
-    <div class="col-md-4">
-        <label class="form-label">Pos. Y</label>
-        <input type="number" class="form-control" th:field="*{posY}">
-    </div>
+        <div class="col-md-4">
+            <label class="form-label fw-bold">Pos. Y</label>
+            <input type="number" class="form-control" th:field="*{posY}">
+        </div>
 
-    <div class="col-md-12">
-        <label class="form-label">Pátio</label>
-        <select class="form-select" th:field="*{patio.id}" required>
-            <option th:each="p : ${patios}" th:value="${p.id}" th:text="${p.nome}"></option>
-        </select>
-    </div>
+        <div class="col-md-12">
+            <label class="form-label fw-bold">Pátio</label>
+            <select class="form-select" th:field="*{patio.id}" required>
+                <option th:each="p : ${patios}" th:value="${p.id}" th:text="${p.nome}"></option>
+            </select>
+            <div class="text-danger small" th:errors="*{patio}"></div>
+        </div>
 
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-    <div class="col-12">
-        <button class="btn btn-primary">Salvar</button>
-        <a class="btn btn-secondary" th:href="@{/sensores}">Voltar</a>
-    </div>
-</form>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <div class="col-12 d-flex justify-content-end gap-2">
+            <button class="btn btn-primary">Salvar</button>
+            <a class="btn btn-secondary" th:href="@{/sensores}">Voltar</a>
+        </div>
+    </form>
+</div>
 
 <div th:replace="~{fragmentos :: rodape-scripts}"></div>
 </body>
