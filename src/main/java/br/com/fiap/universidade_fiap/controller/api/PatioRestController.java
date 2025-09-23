@@ -28,8 +28,7 @@ public class PatioRestController {
 
     @GetMapping("/{id}")
     public PatioDTO get(@PathVariable Long id) {
-        Patio p = service.findById(id);
-        return PatioDTO.from(p);
+        return PatioDTO.from(service.findById(id));
     }
 
     @PostMapping
@@ -42,9 +41,14 @@ public class PatioRestController {
 
     @PutMapping("/{id}")
     public PatioDTO update(@PathVariable Long id, @Valid @RequestBody PatioDTO dto) {
-        Patio entity = dto.toEntity();
-        entity.setId(id);
-        return PatioDTO.from(service.save(entity));
+        Patio existing = service.findById(id); // garante que existe, com created_at preenchido
+        existing.setNome(dto.nome());
+        existing.setCapacidade(dto.capacidade());
+        existing.setLocalizacao(dto.localizacao());
+        existing.setLargura(dto.largura());
+        existing.setAltura(dto.altura());
+        // NÃO tocar em existing.setCreatedAt(...)
+        return PatioDTO.from(service.save(existing));
     }
 
     @DeleteMapping("/{id}")
