@@ -1,18 +1,32 @@
-name: CD - Deploy to Azure Web App (Container)
+name: Deploy to Azure Web App
+
 on:
-  workflow_dispatch:
   push:
-    tags: ['v*.*.*']
+    branches: [ "master" ]
+  workflow_dispatch:
+
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: azure/login@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - uses: azure/webapps-deploy@v3
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      # Ajuste o perfil se necessário (seu pom tem o profile 'postgres')
+      - name: Build (Maven)
+        run: mvn -Ppostgres -DskipTests package
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          images: ghcr.io/${{ github.repository }}:latest
-          slot-name: production
+          app-name: java-challenge-s3-calazans
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4516EFC10A8E43578153F04FE4B9CD30 }}
+          package: target/universidade_fiap-0.0.1-SNAPSHOT.jar
