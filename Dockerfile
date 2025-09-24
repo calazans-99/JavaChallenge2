@@ -12,4 +12,5 @@ USER app
 WORKDIR /app
 COPY --from=build /app/target/*-SNAPSHOT.jar app.jar
 EXPOSE 8080
+ENV SPRING_PROFILES_ACTIVE=postgres
 ENTRYPOINT ["java","-jar","/app/app.jar"]

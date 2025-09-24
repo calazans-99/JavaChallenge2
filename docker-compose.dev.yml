@@ -1,30 +1,48 @@
-# docker-compose.dev.yml
 services:
   db:
     image: postgres:16-alpine
     container_name: java-db-1
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: challenge
+      POSTGRES_PASSWORD: challenge
+      POSTGRES_DB: challenge
     ports:
-      - "5432:5432"   # se esta porta estiver ocupada, troque para "5433:5432"
+      - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
+      - java_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d challenge"]
+      test: ["CMD-SHELL", "pg_isready -U challenge -d challenge"]
       interval: 5s
       timeout: 3s
       retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: java-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      SERVER_PORT: "8080"
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: challenge
+      DB_USER: challenge
+      DB_PASSWORD: challenge
+    ports:
+      - "8083:8080"
 
   pgadmin:
     image: dpage/pgadmin4:8.12
     container_name: pgadmin_challenge
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@local
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: rm556620@fiap.com.br
+      PGADMIN_DEFAULT_PASSWORD: 908990
     ports:
       - "8080:80"
     depends_on:
@@ -32,4 +50,4 @@ services:
         condition: service_healthy
 
 volumes:
-  pgdata:
+  java_pgdata: {}
