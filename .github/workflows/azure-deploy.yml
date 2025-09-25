@@ -2,7 +2,7 @@ name: Build & Deploy to Azure Web App
 
 on:
   push:
-    branches: [ "master" ]   # troque para "main" se for o seu caso
+    branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
@@ -26,6 +26,7 @@ jobs:
       - name: Build (Maven)
         run: mvn -Ppostgres -DskipTests package
 
+      # Ajustes de runtime/app settings (se precisar)
       - name: Ensure Web App is Java 17
         run: |
           az webapp config set \
@@ -37,14 +38,27 @@ jobs:
           az resource update --ids "$ID" --set properties.siteConfig.appCommandLine=""
           az resource update --ids "$ID" --set properties.siteConfig.metadata="[{\"name\":\"CURRENT_STACK\",\"value\":\"java\"}]"
 
-      - name: Ensure App Settings
+      - name: Ensure app settings
         run: |
           az webapp config appsettings set \
             -g rg-fiap-2tdsph-sprint3-marcus-lucas \
             -n java-challenge-s3-calazans \
             --settings WEBSITES_PORT=8080 JAVA_OPTS="-Xms256m -Xmx512m"
 
-      - name: Deploy JAR (CLI)
+      # ❗ Espera curta + "warm-up" do Kudu para evitar o restart durante o deploy
+      - name: Warm up SCM
+        shell: bash
+        run: |
+          sleep 20
+          # Qualquer 200/401 já indica que o Kudu subiu
+          for i in {1..10}; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" https://java-challenge-s3-calazans.scm.azurewebsites.net/)
+            echo "SCM probe HTTP $code"
+            [[ "$code" == "200" || "$code" == "401" ]] && break
+            sleep 5
+          done
+
+      - name: Deploy JAR via CLI
         run: |
           az webapp deploy \
             -g rg-fiap-2tdsph-sprint3-marcus-lucas \
@@ -52,5 +66,4 @@ jobs:
             --type jar \
             --src-path target/universidade_fiap-0.0.1-SNAPSHOT.jar
 
-      - name: Restart
-        run: az webapp restart -g rg-fiap-2tdsph-sprint3-marcus-lucas -n java-challenge-s3-calazans
+      # Normalmente não precisa reiniciar. Se o app não subir, aí sim considerar um restart em um job separado.
