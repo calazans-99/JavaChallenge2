@@ -1,8 +1,9 @@
+-- Índices (H2 aceita IF NOT EXISTS)
+CREATE INDEX IF NOT EXISTS idx_sensor_patio ON sensor (id_patio);
+CREATE INDEX IF NOT EXISTS idx_moto_patio   ON moto   (id_patio);
+CREATE INDEX IF NOT EXISTS idx_moto_status  ON moto   (id_status_moto);
 
-CREATE INDEX IF NOT EXISTS idx_sensor_patio       ON sensor (id_patio);
-CREATE INDEX IF NOT EXISTS idx_moto_patio         ON moto   (id_patio);
-CREATE INDEX IF NOT EXISTS idx_moto_status        ON moto   (id_status_moto);
-
+-- Seeds equivalentes
 INSERT INTO funcao (nome)
 SELECT 'OPERADOR'
 WHERE NOT EXISTS (SELECT 1 FROM funcao WHERE nome = 'OPERADOR');
@@ -17,9 +18,10 @@ WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE username = 'oper');
 INSERT INTO usuario_funcao_tab (id_usuario, id_funcao)
 SELECT u.id, f.id
 FROM usuario u
-JOIN funcao f ON f.nome = 'OPERADOR'
+JOIN funcao  f ON f.nome = 'OPERADOR'
 WHERE u.username = 'oper'
   AND NOT EXISTS (
-      SELECT 1 FROM usuario_funcao_tab x
-      WHERE x.id_usuario = u.id AND x.id_funcao = f.id
+    SELECT 1
+    FROM usuario_funcao_tab x
+    WHERE x.id_usuario = u.id AND x.id_funcao = f.id
   );

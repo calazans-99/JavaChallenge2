@@ -1,3 +1,5 @@
+-- V5__seed_core.sql (MySQL 8)
+
 -- ======= PÁTIO =======
 INSERT INTO patio (nome, localizacao, capacidade)
 SELECT 'Pátio Principal', 'Bloco A', 100
@@ -13,17 +15,17 @@ SELECT 'EM_MANUTENCAO' WHERE NOT EXISTS (SELECT 1 FROM status_moto WHERE nome = 
 INSERT INTO status_moto (nome)
 SELECT 'INATIVA' WHERE NOT EXISTS (SELECT 1 FROM status_moto WHERE nome = 'INATIVA');
 
--- ======= SENSOR (1 sensor no pátio principal) =======
-INSERT INTO sensor (tipo, status, pos_x, pos_y, id_patio)
+-- ======= SENSOR =======
+INSERT INTO sensor (tipo, `status`, pos_x, pos_y, id_patio)
 SELECT 'PRESENCA', 'ATIVO', 0, 0, p.id_patio
 FROM patio p
 WHERE p.nome = 'Pátio Principal'
   AND NOT EXISTS (
     SELECT 1 FROM sensor s
-    WHERE s.tipo='PRESENCA' AND s.id_patio = p.id_patio
+    WHERE s.tipo = 'PRESENCA' AND s.id_patio = p.id_patio
   );
 
--- ======= MOTO (1 moto de exemplo) =======
+-- ======= MOTO =======
 INSERT INTO moto (modelo, placa, pos_x, pos_y, id_patio, id_status_moto)
 SELECT 'PCX 160', 'ABC-1234', 1, 1, p.id_patio, sm.id_status_moto
 FROM patio p
@@ -31,12 +33,16 @@ JOIN status_moto sm ON sm.nome = 'ATIVA'
 WHERE p.nome = 'Pátio Principal'
   AND NOT EXISTS (SELECT 1 FROM moto m WHERE m.placa = 'ABC-1234');
 
--- ======= FUNÇÕES (garante ADMIN/OPERADOR) =======
-INSERT INTO funcao (nome) VALUES ('ADMIN') ON CONFLICT (nome) DO NOTHING;
-INSERT INTO funcao (nome) VALUES ('OPERADOR') ON CONFLICT (nome) DO NOTHING;
+-- ======= FUNÇÕES =======
+INSERT INTO funcao (nome)
+SELECT 'ADMIN'
+WHERE NOT EXISTS (SELECT 1 FROM funcao WHERE nome = 'ADMIN');
+
+INSERT INTO funcao (nome)
+SELECT 'OPERADOR'
+WHERE NOT EXISTS (SELECT 1 FROM funcao WHERE nome = 'OPERADOR');
 
 -- ======= USUÁRIO ADMIN =======
--- username: admin | senha: admin (hash BCrypt abaixo)
 INSERT INTO usuario (username, senha, img_perfil, nome_perfil)
 SELECT 'admin',
        '$2a$12$h227p1QzQEB2cIW/BrzZletfr20O0lNDBMYZM0K6z5faY6bJ17kpO',
@@ -44,7 +50,13 @@ SELECT 'admin',
        'Administrador'
 WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE username = 'admin');
 
--- Vínculo admin -> ADMIN (sem duplicar)
+-- Atualiza senha caso não esteja em formato BCrypt
+UPDATE usuario
+SET senha = '$2a$12$h227p1QzQEB2cIW/BrzZletfr20O0lNDBMYZM0K6z5faY6bJ17kpO'
+WHERE username = 'admin'
+  AND (senha IS NULL OR senha NOT LIKE '$2%');
+
+-- ======= VÍNCULO ADMIN -> FUNÇÃO ADMIN =======
 INSERT INTO usuario_funcao_tab (id_usuario, id_funcao)
 SELECT u.id, f.id
 FROM usuario u

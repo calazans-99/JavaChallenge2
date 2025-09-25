@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan
 @ComponentScan
 @SpringBootApplication
-public class UniversidadeFiapApplication {
+public class    UniversidadeFiapApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(UniversidadeFiapApplication.class, args);
