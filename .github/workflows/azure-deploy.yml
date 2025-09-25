@@ -2,7 +2,7 @@ name: Build & Deploy to Azure Web App
 
 on:
   push:
-    branches: [ "master" ]   # troque para "main" se for o seu branch
+    branches: [ "master" ]   # troque para "main" se for o seu caso
   workflow_dispatch:
 
 jobs:
@@ -35,7 +35,6 @@ jobs:
 
           ID=$(az webapp show -g rg-fiap-2tdsph-sprint3-marcus-lucas -n java-challenge-s3-calazans --query id -o tsv)
           az resource update --ids "$ID" --set properties.siteConfig.appCommandLine=""
-          # tentar alinhar o metadado de stack
           az resource update --ids "$ID" --set properties.siteConfig.metadata="[{\"name\":\"CURRENT_STACK\",\"value\":\"java\"}]"
 
       - name: Ensure App Settings
