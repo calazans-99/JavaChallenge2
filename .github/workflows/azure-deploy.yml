@@ -8,6 +8,15 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      AZ_RG: rg-fiap-sprint3-rm556620
+      AZ_APP: java-challenge-s3-rm556620
+      JAR_PATH: target/universidade_fiap-0.0.1-SNAPSHOT.jar
+
     steps:
       - uses: actions/checkout@v4
 
@@ -23,47 +32,32 @@ jobs:
           java-version: '17'
           cache: maven
 
-      - name: Build (Maven)
+      - name: Build (Maven, profile postgres)
         run: mvn -Ppostgres -DskipTests package
 
-      # Ajustes de runtime/app settings (se precisar)
-      - name: Ensure Web App is Java 17
-        run: |
-          az webapp config set \
-            -g rg-fiap-2tdsph-sprint3-marcus-lucas \
-            -n java-challenge-s3-calazans \
-            --linux-fx-version "JAVA:17-java17"
+      # Garante CLI do Azure disponível para usar 'az'
+      - name: Azure CLI
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            # (Opcional) Garantir runtime Java 17 — rodar só na 1ª vez
+            az webapp config set -g "$AZ_RG" -n "$AZ_APP" --linux-fx-version "JAVA:17-java17"
 
-          ID=$(az webapp show -g rg-fiap-2tdsph-sprint3-marcus-lucas -n java-challenge-s3-calazans --query id -o tsv)
-          az resource update --ids "$ID" --set properties.siteConfig.appCommandLine=""
-          az resource update --ids "$ID" --set properties.siteConfig.metadata="[{\"name\":\"CURRENT_STACK\",\"value\":\"java\"}]"
+            # (Opcional) Ajustes mínimos de app settings; já estão setados pelo script de infra
+            az webapp config appsettings set \
+              -g "$AZ_RG" -n "$AZ_APP" \
+              --settings WEBSITES_PORT=8080 JAVA_OPTS="-Xms256m -Xmx512m"
 
-      - name: Ensure app settings
-        run: |
-          az webapp config appsettings set \
-            -g rg-fiap-2tdsph-sprint3-marcus-lucas \
-            -n java-challenge-s3-calazans \
-            --settings WEBSITES_PORT=8080 JAVA_OPTS="-Xms256m -Xmx512m"
+            # Warm-up rápido do Kudu para evitar restart durante o deploy
+            for i in {1..10}; do
+              code=$(curl -s -o /dev/null -w "%{http_code}" "https://$AZ_APP.scm.azurewebsites.net/")
+              echo "SCM probe HTTP $code"
+              [[ "$code" == "200" || "$code" == "401" ]] && break
+              sleep 5
+            done
 
-      # ❗ Espera curta + "warm-up" do Kudu para evitar o restart durante o deploy
-      - name: Warm up SCM
-        shell: bash
-        run: |
-          sleep 20
-          # Qualquer 200/401 já indica que o Kudu subiu
-          for i in {1..10}; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" https://java-challenge-s3-calazans.scm.azurewebsites.net/)
-            echo "SCM probe HTTP $code"
-            [[ "$code" == "200" || "$code" == "401" ]] && break
-            sleep 5
-          done
-
-      - name: Deploy JAR via CLI
-        run: |
-          az webapp deploy \
-            -g rg-fiap-2tdsph-sprint3-marcus-lucas \
-            -n java-challenge-s3-calazans \
-            --type jar \
-            --src-path target/universidade_fiap-0.0.1-SNAPSHOT.jar
-
-      # Normalmente não precisa reiniciar. Se o app não subir, aí sim considerar um restart em um job separado.
+            # Deploy do JAR
+            az webapp deploy \
+              -g "$AZ_RG" -n "$AZ_APP" \
+              --type jar \
+              --src-path "$JAR_PATH"
