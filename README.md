@@ -4,7 +4,7 @@
 
 ---
 
-## 🧾 Sumário
+## 🧾 Sumário  
 - [Destaques](#-destaques)
 - [Arquitetura & Stack](#%EF%B8%8F-arquitetura--stack)
 - [Rotas & Permissões](#%EF%B8%8F-rotas--permissões)
