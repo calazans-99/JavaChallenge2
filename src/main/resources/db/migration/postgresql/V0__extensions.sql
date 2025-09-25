@@ -1,4 +1,6 @@
--- Sem EXTENSIONS; funções puras de UUID v4
+-- V0__extensions.sql — compatível com Azure PG sem EXTENSIONS
+
+-- Função pura para UUID v4
 CREATE OR REPLACE FUNCTION gen_random_uuid() RETURNS uuid
 LANGUAGE sql VOLATILE AS $$
   SELECT (
@@ -11,6 +13,7 @@ LANGUAGE sql VOLATILE AS $$
   )::uuid;
 $$;
 
+-- Shim para compatibilidade com migrations/código
 CREATE OR REPLACE FUNCTION uuid_generate_v4() RETURNS uuid
 LANGUAGE sql STABLE AS $$
   SELECT gen_random_uuid();
