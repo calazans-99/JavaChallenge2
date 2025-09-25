@@ -2,7 +2,7 @@ name: Build & Deploy to Azure Web App: java-challenge-s3-rm556620
 
 on:
   push:
-    branches: [ master ]
+    branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
@@ -30,6 +30,6 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.AZ_APP }}
-          slot-name: 'production'
+          slot-name: production
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_F90BE419CD704982876CBC9C36E45FF8 }}
           package: ${{ env.JAR_PATH }}
