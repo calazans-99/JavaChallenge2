@@ -12,6 +12,9 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # necessário para OIDC
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -32,25 +35,19 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # garante que o App Service está em Java 17 e aplica as app settings (idempotente)
-      - name: Configure App Service
+      - name: Configure and Deploy (CLI)
         uses: azure/cli@v2
         with:
           inlineScript: |
             az webapp config set -g $AZ_RG -n $AZ_APP --linux-fx-version "JAVA:17-java17"
             az webapp config set -g $AZ_RG -n $AZ_APP --startup-file ""
+            az webapp config container delete -g $AZ_RG -n $AZ_APP
             az webapp config appsettings set -g $AZ_RG -n $AZ_APP --settings \
               SPRING_PROFILES_ACTIVE=postgres \
               SPRING_DATASOURCE_URL="${{ secrets.SPRING_DATASOURCE_URL }}" \
               SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
               SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
               WEBSITES_PORT=8080 JAVA_OPTS="-Xms256m -Xmx512m"
-            # pequeno intervalo para evitar conflito de "SCM container restart"
-            sleep 15
-
-      - name: Deploy JAR
-        uses: azure/cli@v2
-        with:
-          inlineScript: |
+            sleep 10
             az webapp deploy -g $AZ_RG -n $AZ_APP --type jar --src-path target/universidade_fiap-0.0.1-SNAPSHOT.jar
             az webapp restart -g $AZ_RG -n $AZ_APP
