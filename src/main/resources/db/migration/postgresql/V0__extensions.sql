@@ -1,15 +1,20 @@
--- V0__extensions.sql (POSTGRES)
--- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- V0__extensions.sql — sem extensões (compatível com Azure PG restrito)
 
--- V0__extensions.sql (POSTGRES) - patched para Azure Flexible Server
--- Substitui uuid-ossp por pgcrypto (permitida) e cria um shim para uuid_generate_v4()
+-- Gera um UUID v4 só com funções nativas (sem pgcrypto/uuid-ossp)
+CREATE OR REPLACE FUNCTION gen_random_uuid() RETURNS uuid
+LANGUAGE sql VOLATILE AS $$
+  SELECT (
+    lpad(to_hex(floor(random()*4294967295)::bigint),8,'0') || '-' ||
+    lpad(to_hex(floor(random()*65535)::bigint),4,'0')      || '-' ||
+    lpad(to_hex(((floor(random()*4095)::bigint) | x'4000')::int),4,'0') || '-' ||  -- version 4
+    lpad(to_hex(((floor(random()*16383)::bigint) | x'8000')::int),4,'0') || '-' || -- variant 10xx
+    lpad(to_hex(floor(random()*4294967295)::bigint),8,'0') ||
+    lpad(to_hex(floor(random()*65535)::bigint),4,'0')
+  )::uuid;
+$$;
 
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
-DO $$
-BEGIN
-  IF to_regprocedure('uuid_generate_v4()') IS NULL THEN
-    CREATE OR REPLACE FUNCTION uuid_generate_v4() RETURNS uuid
-    LANGUAGE sql AS $$ SELECT gen_random_uuid() $$;
-  END IF;
-END $$;
+-- Shim para compatibilidade com migrations/código que chamam uuid_generate_v4()
+CREATE OR REPLACE FUNCTION uuid_generate_v4() RETURNS uuid
+LANGUAGE sql STABLE AS $$
+  SELECT gen_random_uuid();
+$$;
