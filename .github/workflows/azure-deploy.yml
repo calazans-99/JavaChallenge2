@@ -2,7 +2,7 @@ name: Build & Deploy to Azure Web App
 
 on:
   push:
-    branches: [ "master" ]   # troque para "main" se for o seu caso
+    branches: [ "master" ]   # troque para "main" se for o seu branch
   workflow_dispatch:
 
 jobs:
@@ -23,32 +23,35 @@ jobs:
           java-version: '17'
           cache: maven
 
-      # ajuste o -Ppostgres se o seu pom usa outro profile (ou remova se não usa)
       - name: Build (Maven)
         run: mvn -Ppostgres -DskipTests package
 
-      - name: Pick built JAR
-        id: pick
-        run: echo "jar=$(ls target/*-SNAPSHOT.jar | head -n1)" >> $GITHUB_OUTPUT
-
-      # Garante que o site está como Java 17 (evita voltar para PHP)
       - name: Ensure Web App is Java 17
         run: |
-          az webapp config set -g rg-fiap-2tdsph-sprint3-marcus-lucas -n java-challenge-s3-calazans --linux-fx-version "JAVA:17-java17"
+          az webapp config set \
+            -g rg-fiap-2tdsph-sprint3-marcus-lucas \
+            -n java-challenge-s3-calazans \
+            --linux-fx-version "JAVA:17-java17"
+
           ID=$(az webapp show -g rg-fiap-2tdsph-sprint3-marcus-lucas -n java-challenge-s3-calazans --query id -o tsv)
-          az resource update --ids "$ID" --set properties.siteConfig.metadata="[{'name':'CURRENT_STACK','value':'java'}]" properties.siteConfig.appCommandLine=""
+          az resource update --ids "$ID" --set properties.siteConfig.appCommandLine=""
+          # tentar alinhar o metadado de stack
+          az resource update --ids "$ID" --set properties.siteConfig.metadata="[{\"name\":\"CURRENT_STACK\",\"value\":\"java\"}]"
 
       - name: Ensure App Settings
         run: |
-          az webapp config appsettings set -g rg-fiap-2tdsph-sprint3-marcus-lucas -n java-challenge-s3-calazans --settings WEBSITES_PORT=8080 JAVA_OPTS="-Xms256m -Xmx512m"
+          az webapp config appsettings set \
+            -g rg-fiap-2tdsph-sprint3-marcus-lucas \
+            -n java-challenge-s3-calazans \
+            --settings WEBSITES_PORT=8080 JAVA_OPTS="-Xms256m -Xmx512m"
 
-      - name: Deploy JAR
+      - name: Deploy JAR (CLI)
         run: |
           az webapp deploy \
             -g rg-fiap-2tdsph-sprint3-marcus-lucas \
             -n java-challenge-s3-calazans \
             --type jar \
-            --src-path "${{ steps.pick.outputs.jar }}"
+            --src-path target/universidade_fiap-0.0.1-SNAPSHOT.jar
 
-      - name: Restart Web App
+      - name: Restart
         run: az webapp restart -g rg-fiap-2tdsph-sprint3-marcus-lucas -n java-challenge-s3-calazans
