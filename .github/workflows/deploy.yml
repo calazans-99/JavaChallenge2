@@ -1,0 +1,56 @@
+name: Deploy to Azure Web App
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  AZ_RG: rg-fiap-2tdsph-sprint3-marcus-lucas
+  AZ_APP: java-challenge-s3-calazans
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Build (Maven)
+        run: mvn -Ppostgres -DskipTests package
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # garante que o App Service está em Java 17 e aplica as app settings (idempotente)
+      - name: Configure App Service
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az webapp config set -g $AZ_RG -n $AZ_APP --linux-fx-version "JAVA:17-java17"
+            az webapp config set -g $AZ_RG -n $AZ_APP --startup-file ""
+            az webapp config appsettings set -g $AZ_RG -n $AZ_APP --settings \
+              SPRING_PROFILES_ACTIVE=postgres \
+              SPRING_DATASOURCE_URL="${{ secrets.SPRING_DATASOURCE_URL }}" \
+              SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
+              SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
+              WEBSITES_PORT=8080 JAVA_OPTS="-Xms256m -Xmx512m"
+            # pequeno intervalo para evitar conflito de "SCM container restart"
+            sleep 15
+
+      - name: Deploy JAR
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az webapp deploy -g $AZ_RG -n $AZ_APP --type jar --src-path target/universidade_fiap-0.0.1-SNAPSHOT.jar
+            az webapp restart -g $AZ_RG -n $AZ_APP
