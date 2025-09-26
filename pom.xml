@@ -138,6 +138,29 @@
             </dependencies>
         </profile>
 
+        <!-- ================= SQL Server (Azure SQL) ================= -->
+        <profile>
+            <id>sqlserver</id>
+            <properties>
+                <!-- ativa o application-sqlserver.properties -->
+                <active.spring.profile>sqlserver</active.spring.profile>
+            </properties>
+            <dependencies>
+                <!-- Driver do SQL Server -->
+                <dependency>
+                    <groupId>com.microsoft.sqlserver</groupId>
+                    <artifactId>mssql-jdbc</artifactId>
+                    <scope>runtime</scope>
+                </dependency>
+                <!-- Flyway para SQL Server -->
+                <dependency>
+                    <groupId>org.flywaydb</groupId>
+                    <artifactId>flyway-sqlserver</artifactId>
+                    <version>${flyway.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
         <!-- ================= MySQL (Docker Desktop / ACR+ACI) ================= -->
         <profile>
             <id>mysql</id>
