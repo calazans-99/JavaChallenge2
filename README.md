@@ -322,13 +322,9 @@ curl -i http://localhost:8081/motos
 
 ---
 
-## 📜 Licença
-
-Projeto acadêmico. Uso livre para fins educacionais.
-
----
-
 ## 👥 Autores
 
-- Time do projeto – **preencha nomes/RM aqui**
-- Professor(a)/Turma (opcional)
+Marcus Vinicius de Souza Calazans — RM: 556620
+Lucas Abud Berbel — RM: 557957
+
+📅 Challenge 2025 – FIAP | 2TDS | 2º Semestre
